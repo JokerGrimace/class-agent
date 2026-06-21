@@ -4,7 +4,7 @@
 
 ### agent根据skill进行作业
 
-<video src="https://github.com/user-attachments/assets/315605b8-394d-459a-ba53-b07f5185cd12"></video>
+<video src="https://github.com/user-attachments/assets/c1bcbd01-c25b-4f76-94bb-ccca57fae115"></video>
 
 ### 模拟agent工具调用失败后的重试策略及后续回答
 
