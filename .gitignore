@@ -1,0 +1,51 @@
+# Runtime configuration and credentials
+.env
+.env.*
+!.env.example
+
+# Runtime data
+data/
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# Local IDE state
+.idea/
+
+# Local audit and temporary artifacts
+project_process/
+app/$null
+app/temp_baidu.html
+app/trending.html
+
+# Developer environments and caches
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.vscode/
+.codex/
+.cursor/
+.codegraph/
+
+# Local runtime output and credentials
+logs/
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Private evaluation output
+tests/evals/*result*
+tests/evals/*.stdout.txt
+tests/evals/*.stderr.txt
+tests/evals/*.console.txt
+tests/evals/tmp.*
+tests/evals/*.real_http.json
+.DS_Store
+Thumbs.db
