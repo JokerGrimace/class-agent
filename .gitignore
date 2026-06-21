@@ -1,0 +1,20 @@
+# Runtime configuration and credentials
+.env
+.env.*
+!.env.example
+
+# Runtime data
+data/
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# Local IDE state
+.idea/
+
+# Local audit and temporary artifacts
+project_process/
+app/$null
+app/temp_baidu.html
+app/trending.html

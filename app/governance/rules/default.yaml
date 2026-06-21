@@ -1,0 +1,57 @@
+version: 1
+
+defaults:
+  decision: allow
+  visibility: hidden
+  on_deny: retry_reasoning
+
+field_presets:
+  name_like_fields:
+    visible_fields: [name, title, folder_name, file_name]
+    editable_fields: [name, title, folder_name, file_name]
+
+rules:
+  - id: require-approval-for-mutating-remote-tools
+    priority: 110
+    match:
+      tool_tags_all: [remote_api, mutating]
+    effect:
+      decision: ask
+      summary: "This action will modify remote data."
+      deny_message: "User denied this operation. Do not repeat it unchanged."
+      support_user_revision: true
+
+  - id: require-approval-for-mutating-remote-actions
+    priority: 100
+    match:
+      tool_tags_all: [remote_api]
+      action_tags_any: [mutating]
+    effect:
+      decision: ask
+      summary: "This action will modify remote data."
+      deny_message: "User denied this operation. Do not repeat it unchanged."
+      support_user_revision: true
+
+  - id: expose-name-like-fields-for-rename-or-create-tools
+    priority: 90
+    match:
+      tool_tags_all: [remote_api]
+      tool_tags_any: [rename, create]
+    effect:
+      field_preset: name_like_fields
+
+  - id: expose-chapter-list-for-build-to-chapter
+    priority: 85
+    match:
+      tool_names_any: [build_to_chapter]
+    effect:
+      visible_fields: [chapter_list]
+      editable_fields: [chapter_list]
+
+  - id: expose-name-like-fields-for-revision
+    priority: 80
+    match:
+      tool_tags_all: [remote_api]
+      action_tags_any: [rename, create]
+    effect:
+      field_preset: name_like_fields
