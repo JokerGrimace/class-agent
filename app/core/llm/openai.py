@@ -9,13 +9,7 @@ from app.core.llm.user_service import UserModelCredential, get_user_scoped_llm_s
 
 
 class OpenAIAdapter(LLMAdapter):
-    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
-        # 显式 Key 只服务隔离测试；生产构造不再读取统一共享 Key。
-        self.client = (
-            AsyncOpenAI(api_key=api_key, base_url=settings.openai_base_url)
-            if api_key
-            else None
-        )
+    def __init__(self, model: Optional[str] = None):
         self.model = model
 
     async def chat(
@@ -58,20 +52,16 @@ class OpenAIAdapter(LLMAdapter):
             params["tool_choice"] = "auto"
 
         # 生产调用在发送前解析当前教师凭证；relay 401/403 的刷新由服务统一处理。
-        if self.client is not None:
-            params["model"] = self.model or settings.openai_model
-            response = await self.client.chat.completions.create(**params)
-        else:
-            async def invoke(credential: UserModelCredential):
-                client = AsyncOpenAI(
-                    api_key=credential.api_key,
-                    base_url=settings.openai_base_url,
-                )
-                request_params = dict(params)
-                request_params["model"] = self.model or credential.model
-                return await client.chat.completions.create(**request_params)
+        async def invoke(credential: UserModelCredential):
+            client = AsyncOpenAI(
+                api_key=credential.api_key,
+                base_url=settings.openai_base_url,
+            )
+            request_params = dict(params)
+            request_params["model"] = self.model or credential.model
+            return await client.chat.completions.create(**request_params)
 
-            response = await get_user_scoped_llm_service().call_llm(invoke)
+        response = await get_user_scoped_llm_service().call_llm(invoke)
 
         if stream:
             pending_tool_calls: dict[int, dict[str, Any]] = {}

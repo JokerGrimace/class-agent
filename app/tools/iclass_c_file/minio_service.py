@@ -102,8 +102,3 @@ def list_minio_files():
         return [obj.object_name for obj in objects]
     except S3Error:
         return []
-if __name__ == '__main__':
-    file_lists = list_minio_files()
-    for file_path in file_lists:
-        print(file_path)
-        print("\n")

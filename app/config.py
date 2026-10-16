@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Literal, Optional
 
-from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -17,7 +16,7 @@ class Settings(BaseSettings):
     sessions_dir: Path = Path("data/sessions")
     workspace_dir: Path = Path("data/workspace")
 
-    llm_provider: Literal["openai", "ollama", "e2e_task_system"] = "openai"
+    llm_provider: Literal["openai", "ollama"] = "openai"
 
     # 生产模型凭证由用户级服务动态提供，不保留统一共享 API Key。
     openai_api_key: str = ""
@@ -70,22 +69,6 @@ class Settings(BaseSettings):
     mysql_readonly_url: str = ""
     mysql_readonly_username: str = ""
     mysql_readonly_password: str = ""
-    # 本机联调必须显式开启并自行配置随机凭证；默认部署不提供测试身份入口。
-    session_auth_bypass_for_testing: bool = False
-    session_auth_test_token: str = ""
-    session_auth_test_user_id: str = ""
-    session_auth_test_user_role: str = ""
-
-    # 在启动时拒绝不完整的测试配置，避免开启开关后退化为空凭证或弱口令认证。
-    @model_validator(mode="after")
-    def validate_local_auth(self):
-        if self.session_auth_bypass_for_testing:
-            if len(self.session_auth_test_token.strip()) < 32:
-                raise ValueError("Local test authentication requires a random token of at least 32 characters")
-            if not self.session_auth_test_user_id.strip() or not self.session_auth_test_user_role.strip():
-                raise ValueError("Local test authentication requires a user id and role")
-        return self
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.sessions_dir = self.data_dir / "sessions"

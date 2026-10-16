@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw AI</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+
+<header id="header">
+  <button id="toggle-sidebar" class="icon-btn">☰</button>
+  <span class="logo">OpenClaw</span>
+  <span class="model-tag">deepseek-v4-pro</span>
+  <button id="new-chat-btn" class="icon-btn">+</button>
+</header>
+
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <button id="nav-new-chat" class="btn-new-chat">+ 新建对话</button>
+  </div>
+  <div id="session-list"></div>
+</aside>
+
+<main id="chat-main">
+  <div id="messages">
+    <div class="welcome">
+      <div class="welcome-logo">OpenClaw</div>
+      <p>你的 AI 助手</p>
+    </div>
+  </div>
+
+  <div id="banner-area"></div>
+
+  <footer id="input-area">
+    <div class="input-wrapper">
+      <textarea id="input" rows="1" placeholder="输入消息..." autofocus></textarea>
+      <button id="send-btn" disabled>↑</button>
+    </div>
+  </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

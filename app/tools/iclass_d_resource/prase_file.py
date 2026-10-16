@@ -502,21 +502,3 @@ def resolve_html(file_path: str):
     file_bytes = download_minio_file_bytes(file_path)
     html_text = file_bytes.decode("utf-8")
     return html_text
-
-
-if __name__ == '__main__':
-    print("===== 场景1：本地PPT文件解析 =====")
-    test_ppt_path = r"答辩PPT.pptx"  # 替换为你的本地PPT路径
-    try:
-        with open(test_ppt_path, "rb") as f:
-            ppt_bytes = f.read()
-        # 调用解析函数
-        result = parse_temp_file_bytes("demo.pptx", ppt_bytes)
-        print(f"解析成功：{result['success']}")
-        print(f"文件类型：{result['file_type']}")
-        # 保存HTML到本地（可选）
-        with open("demo_ppt.html", "w", encoding="utf-8") as f:
-            f.write(result["html_content"])
-        print("HTML已保存到 demo_ppt.html\n")
-    except Exception as e:
-        print(f"场景1失败：{str(e)}\n")

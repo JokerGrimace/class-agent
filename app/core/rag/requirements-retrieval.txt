@@ -1,0 +1,16 @@
+# iClass Agent 调用 rag_search / rag_answer 所需的检索运行时依赖。
+PyYAML
+python-dotenv>=1.0.0
+elasticsearch
+jieba
+langchain-community
+langchain-core
+langchain-huggingface
+langchain-openai
+sentence-transformers
+tavily-python
+torch
+transformers
+
+# 使用 Ollama 问题重写时才需要。
+langchain-ollama

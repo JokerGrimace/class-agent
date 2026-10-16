@@ -66,9 +66,8 @@ app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
 
 
 if __name__ == "__main__":
-    # 直接运行主模块时也不能将本机测试身份入口绑定到外网或信任代理来源。
     uvicorn.run(
-        "app.main:app", host="127.0.0.1" if settings.session_auth_bypass_for_testing else "0.0.0.0",
+        "app.main:app", host="0.0.0.0",
         port=8000, reload=False, proxy_headers=False,
-        access_log=not settings.session_auth_bypass_for_testing,
+        access_log=True,
     )

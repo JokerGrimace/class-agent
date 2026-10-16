@@ -49,3 +49,23 @@ tests/evals/tmp.*
 tests/evals/*.real_http.json
 .DS_Store
 Thumbs.db
+
+# Local tests, evaluations and development-only harnesses
+/tests/
+/app/evals/
+/app/core/llm/e2e_task_system.py
+/app/tools/e2e_task_system.py
+/app/api/v1/tool.py
+/scripts/e2e_task_system_api.py
+/scripts/run_lesson_prep_space_2_eval.py
+/scripts/run_question_builder_real_eval.py
+/scripts/run_student_detail_eval.py
+/scripts/run_local_inmemory_agent.py
+/scripts/run_local_auth.py
+/scripts/query_modelscope_docling.py
+/docs/superpowers/
+/docs/research/
+/docs/decisions/ADR-003-local-authentication-and-testing.md
+/docs/codex-harness/05-verification-sheet.md
+/docs/codex-harness/agent-capability-extension-manual.md
+/docs/codex-harness/diagrams/

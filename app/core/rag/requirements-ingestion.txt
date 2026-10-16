@@ -1,0 +1,20 @@
+# 文档摄取和非 Elasticsearch 后端在检索依赖基础上按需安装。
+-r requirements-retrieval.txt
+
+anytree
+beautifulsoup4
+chromadb
+docx2txt
+faiss-cpu
+langchain
+langchain-elasticsearch
+langchain-experimental
+langchain-text-splitters
+# 当前 PDF 解析器调用 MinerU pipeline，基础包不包含 ftfy 等该后端直接依赖。
+mineru[pipeline]
+numpy
+python-pptx
+rank-bm25
+requests
+selenium
+unstructured

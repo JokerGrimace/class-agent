@@ -13,9 +13,5 @@ def create_llm_adapter(provider: Optional[str] = None) -> LLMAdapter:
         return OpenAIAdapter()
     elif provider == "ollama":
         return OllamaAdapter()
-    elif provider == "e2e_task_system":
-        from app.core.llm.e2e_task_system import E2ETaskSystemAdapter
-
-        return E2ETaskSystemAdapter()
     else:
         raise ValueError(f"Unknown LLM provider: {provider}")

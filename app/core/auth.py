@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from ipaddress import ip_address
-from secrets import compare_digest
 from typing import Any, Optional
 
 import httpx
@@ -100,28 +98,6 @@ class IClassUserResolver:
 iclass_user_resolver = IClassUserResolver()
 
 
-def _local_test_user(connection: HTTPConnection, token: Optional[str]) -> Optional[AuthenticatedUser]:
-    # 测试身份只接受显式配置的长凭证和直连回环地址，不信任代理转发的客户端地址。
-    expected = settings.session_auth_test_token.strip()
-    if not settings.session_auth_bypass_for_testing or len(expected) < 32 or not token:
-        return None
-    if not connection.client or any(name in connection.headers for name in ("forwarded", "x-forwarded-for")):
-        return None
-    try:
-        if not ip_address(connection.client.host).is_loopback:
-            return None
-    except ValueError:
-        return None
-    if not compare_digest(token.encode("utf-8"), expected.encode("utf-8")):
-        return None
-    # 本机测试凭证不代表 Java 登录身份，禁止将它作为后端访问 token 继续透传。
-    return AuthenticatedUser(
-        user_id=settings.session_auth_test_user_id,
-        token="",
-        user_role=settings.session_auth_test_user_role,
-    )
-
-
 def _parse_bearer_token(authorization: Optional[str]) -> Optional[str]:
     if not authorization:
         return None
@@ -139,10 +115,6 @@ async def _authenticate_connection(
     # 两种传输共用认证决策；显式提供的 Java 凭证失败后不得切换到另一个身份。
     if iclass_api_token is not None:
         token = iclass_api_token.strip()
-    else:
-        test_user = _local_test_user(connection, token)
-        if test_user:
-            return test_user
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -166,14 +138,6 @@ async def require_authenticated_user(
     return await _authenticate_connection(request, _parse_bearer_token(authorization), iclass_api_token)
 
 
-async def require_local_test_user(request: Request) -> AuthenticatedUser:
-    # 原始工具入口没有页面与会话授权上下文，仅供本机开发者调试，正式用户也不能直调。
-    user = _local_test_user(request, _parse_bearer_token(request.headers.get("authorization")))
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Local test authentication required")
-    return user
-
-
 async def require_websocket_user(websocket: WebSocket) -> AuthenticatedUser:
     authorization = websocket.headers.get("authorization")
     iclass_api_token = websocket.headers.get(ICLASS_API_TOKEN_HEADER)
@@ -181,7 +145,7 @@ async def require_websocket_user(websocket: WebSocket) -> AuthenticatedUser:
     if not token:
         token = websocket.query_params.get("token")
 
-    # 保留 WebSocket 的 4401 协议，同时复用 HTTP 的失败即拒绝与本机测试限制。
+    # 保留 WebSocket 的 4401 协议，同时复用 HTTP 的失败即拒绝逻辑。
     try:
         return await _authenticate_connection(websocket, token, iclass_api_token)
     except HTTPException:

@@ -1,0 +1,87 @@
+# RAGAS.yaml
+project:
+  mode: rag
+
+api_key:
+  # 联网搜索凭据独立配置；模型 API Key 由用户级 Adapter 动态解析。
+  tavily_api_key:
+
+llm:
+  llm_model: api_key
+  llm_model_name: ""
+  temperature: 0
+
+prompt:
+  prompt_template: general
+
+retriever:
+  vector_store_type: elastic
+  # 索引名称由部署人员在私有 YAML 中填写，开源包不携带真实索引配置。
+  vector_store_name: ""
+  subject_vector_store_name: ""
+  teacher_vector_store_name: ""
+  retriever_mode: hybrid_search
+  retriever_top_n: 3  # TODO：每条本地检索路由召回 3 条。
+  iterative_number: 3
+  embeddings_name: BAAI/bge-small-zh-v1.5
+  embeddings_device: cpu
+  is_online: True
+  online_threshold: 0.5
+  max_online_results: 3  # TODO：每条联网检索路由召回 3 条。
+
+query_rewrite:
+  enabled: True
+  history_min_rounds: 2
+  history_max_rounds: 4
+
+rerank:
+  is_rerank: True
+  rerank_model: BAAI/bge-reranker-base
+  rerank_device: cpu
+  threshold_or_top_n: top_n  # TODO：rerank 改为固定取 top_n。
+  rerank_top_n: 5  # TODO：最终 rerank 保留前 5 条。
+  rerank_threshold: 0.55
+  content_similarity_threshold: 0.95  # TODO：相似度达到该值时执行消息源优先去重。
+
+history:
+  is_memory: True
+  max_history_length: 4
+
+pdf_process:
+  mineru_patterns:
+    - "models/Layout/YOLO/*"
+    - "models/MFD/YOLO/*"
+    - "models/MFR/unimernet_hf_small_2503/*"
+    - "models/OCR/paddleocr_torch/*"
+  pdf_extract_model: "opendatalab/PDF-Extract-Kit-1.0"
+  layoutreader_model: "ppaanngggg/layoutreader"
+  mineru_json_url: "https://gcore.jsdelivr.net/gh/opendatalab/MinerU@master/mineru.template.json"
+  config_file_name: "magic-pdf.json"
+  # 机器相关路径通过 ICLASS_RAG_MINERU_HOME / ICLASS_RAG_MINERU_CONFIG 注入。
+  minerU_home_dir:
+  mineru_config:
+
+html_process:
+  html_embedding: BAAI/bge-small-zh-v1.5
+
+cache:
+  # 模型缓存目录通过 ICLASS_RAG_MODELSCOPE_CACHE_DIR 注入。
+  modelscope_cache_dir:
+
+elastic_search_config:
+  # Elasticsearch 连接信息通过 ICLASS_RAG_ES_URL / USER / PASSWORD 注入。
+  es_url: ""
+  es_user:
+  es_password:
+
+embedding_config:
+  embedding_batch: 32
+
+chroma_config:
+  database_url: "data/chroma"
+
+faiss_config:
+  database_url: "data/faiss"
+
+database_config:
+  normal_database: "ElasticsearchStore"

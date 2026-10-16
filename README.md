@@ -141,6 +141,16 @@ flowchart LR
 
 **文字与交互数据分开。** 工具的 content 供模型继续处理；meta.assistant_payload 承载前端需要的题卡或可视化数据。工具结果与 workflow_status、permission_asked 等事件共同组成交互协议。
 
+## 演示视频
+
+### Agent 根据 Skill 进行作业
+
+<video src="https://github.com/user-attachments/assets/c1bcbd01-c25b-4f76-94bb-ccca57fae115"></video>
+
+### Agent 工具调用失败后的重试与回答
+
+<video src="https://github.com/user-attachments/assets/315605b8-394d-459a-ba53-b07f5185cd12"></video>
+
 ## 开发入口
 
 ~~~text
@@ -156,11 +166,10 @@ app/
 │   └── rag/             # 文件入库、检索与授权过滤
 └── tools/               # 教学与通用工具实现
 skills/                  # 运行时技能说明
-tests/                   # 自动化测试
 docs/                    # 模块契约、设计说明与演示图片
 ~~~
 
-Python 运行与测试使用项目约定的 conda 环境 **langchain**。将根目录的 [.env.example](.env.example) 复制为本地 `.env`，按 [app/config.py](app/config.py) 填写所需服务配置。Agent 运行依赖数据库目录数据、iClass API 与模型服务，RAG 另有检索、入库依赖，见 [RAG 说明](app/core/rag/README.md)。
+Python 运行使用项目约定的 conda 环境 **langchain**。将根目录的 [.env.example](.env.example) 复制为本地 `.env`，按 [app/config.py](app/config.py) 填写所需服务配置。Agent 运行依赖数据库目录数据、iClass API 与模型服务，RAG 另有检索、入库依赖，见 [RAG 说明](app/core/rag/README.md)。
 
 ### 开源副本的配置边界
 
@@ -170,25 +179,17 @@ RAG 的 Elasticsearch 地址、凭据和索引名称须在私有配置中填写�
 
 原项目的 `.env`、运行数据、日志、评测运行结果和内部部署脚本未纳入本副本。含姓名与成绩的部分演示截图也未公开。公开模型标识、算法默认参数、相对目录及程序接口字段属于代码契约，保留以便理解和运行项目。
 
-评测输入中的教师、学生、课程和目录上下文使用虚构示例；真实课程附件不提供。接入自己的测试环境时，请私下替换评测上下文并提供测试附件，不要直接向生产业务发起评测。
+开源版本不包含测试用例、LLM 模拟适配器、评测数据及运行脚本，也不提供本机测试身份或原始工具调试接口。业务请求必须使用后端验证的真实登录凭证。
 
 在本仓库根目录执行：
 
 ~~~bash
 conda activate langchain
-python -m pip install -e ".[dev]"
+python -m pip install -e .
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ~~~
 
 健康检查：**GET /v1/health**。业务前端需使用有效登录身份，并配置到该 Agent 服务与 Java 服务；静态 Agent 页面不替代完整教学前端。
 
-针对核心逻辑运行测试：
-
-~~~bash
-python -m pytest tests/test_workflow_scheduler.py tests/test_workflow_subagent_runtime.py
-python -m pytest tests/test_classroom_question_drafts.py tests/test_display_snapshot.py
-python -m pytest tests/test_readonly_course_sql_validation.py tests/test_readonly_course_sql_tool.py
-~~~
-
-上述命令用于开发验证；界面截图不等于全量测试报告。更完整的模块边界见 [Agent Runtime](docs/codex-harness/modules/agent-runtime.md)、[Tool Runtime](docs/codex-harness/modules/tool-runtime.md)、[Permission Governance](docs/codex-harness/modules/permission-governance.md) 与 [项目指南](docs/iclass-agent-project-guide.md)。
+更完整的模块边界见 [Agent Runtime](docs/codex-harness/modules/agent-runtime.md)、[Tool Runtime](docs/codex-harness/modules/tool-runtime.md)、[Permission Governance](docs/codex-harness/modules/permission-governance.md) 与 [项目指南](docs/iclass-agent-project-guide.md)。
 
